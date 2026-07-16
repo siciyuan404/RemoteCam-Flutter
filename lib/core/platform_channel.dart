@@ -5,11 +5,14 @@ class SensorDesc {
   final String title;
   final String cameraId;
   final int format;
-  SensorDesc({required this.title, required this.cameraId, required this.format});
+  /// 0=Back, 1=Front, 2=External (mirrors Android CameraCharacteristics.LENS_FACING_*)
+  final int lensFacing;
+  SensorDesc({required this.title, required this.cameraId, required this.format, this.lensFacing = 0});
   factory SensorDesc.fromMap(Map m) => SensorDesc(
     title: m['title'] as String,
     cameraId: m['cameraId'] as String,
     format: m['format'] as int,
+    lensFacing: (m['lensFacing'] as num?)?.toInt() ?? 0,
   );
 }
 

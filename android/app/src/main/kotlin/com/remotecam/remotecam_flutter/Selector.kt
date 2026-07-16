@@ -10,11 +10,13 @@ import kotlin.math.atan
 import kotlin.math.roundToInt
 
 object Selector {
-    data class SensorDesc(val title: String, val cameraId: String, val format: Int) {
+    // lensFacing: 0=Back, 1=Front, 2=External (mirrors CameraCharacteristics.LENS_FACING_*)
+    data class SensorDesc(val title: String, val cameraId: String, val format: Int, val lensFacing: Int) {
         fun toMap(): Map<String, Any> = mapOf(
             "title" to title,
             "cameraId" to cameraId,
-            "format" to format
+            "format" to format,
+            "lensFacing" to lensFacing
         )
     }
 
@@ -41,9 +43,8 @@ object Selector {
             try {
                 val characteristics = cameraManager.getCameraCharacteristics(id)
 
-                val orientation = lensOrientationString(
-                    characteristics.get(CameraCharacteristics.LENS_FACING)!!
-                )
+                val lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING)!!
+                val orientation = lensOrientationString(lensFacing)
 
                 val focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
                 val apertures = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES)
@@ -69,7 +70,7 @@ object Selector {
                 // Add the camera if we don't already have another one with the exact same title.
                 if (!availableCameras.any { it.title == title }) {
                     availableCameras.add(
-                        SensorDesc(title, id, ImageFormat.JPEG)
+                        SensorDesc(title, id, ImageFormat.JPEG, lensFacing)
                     )
                 }
 

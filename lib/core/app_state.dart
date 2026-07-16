@@ -101,6 +101,13 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update target FPS and notify listeners.
+  Future<void> updateTargetFps(int fps) async {
+    targetFps = fps;
+    await RemoteCamChannel.setTargetFps(fps);
+    notifyListeners();
+  }
+
   Future<void> updateSetting(String key, dynamic value) async {
     await RemoteCamChannel.setSetting(key, value);
     // Update local state

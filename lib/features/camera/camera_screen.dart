@@ -214,6 +214,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   ),
                 ),
               ),
+              if (camData != null)
+                _buildQuickToolbar(l, camData, viewState, appState),
               Expanded(
                 flex: 6,
                 child: SingleChildScrollView(
@@ -249,6 +251,162 @@ class _CameraScreenState extends State<CameraScreen> {
         );
       },
     );
+  }
+
+  /// Quick toolbar below preview: camera switch / aspect ratio / frame rate.
+  Widget _buildQuickToolbar(
+      AppLocalizations l, CameraData camData, ViewState viewState, AppState appState) {
+    final cs = Theme.of(context).colorScheme;
+
+    // --- Aspect ratio logic ---
+    // Compute available ratios from current sensor's resolutions.
+    final ratios = <String>{}; // preserve insertion order
+    final ratioBuckets = <String, List<int>>{}; // ratio -> list of resolution indexes
+    for (var i = 0; i < camData.resolutions.length; i++) {
+      final r = camData.resolutions[i];
+      final ratio = _aspectRatioLabel(r.width, r.height);
+      ratios.add(ratio);
+      (ratioBuckets[ratio] ??= []).add(i);
+    }
+    final availableRatios = ratios.toList();
+
+    // Current ratio derived from selected resolution.
+    final currentResIdx = viewState.resolutionIndex >= 0 &&
+            viewState.resolutionIndex < camData.resolutions.length
+        ? viewState.resolutionIndex
+        : camData.resolutionSelected;
+    final currentRatio = currentResIdx >= 0 && currentResIdx < camData.resolutions.length
+        ? _aspectRatioLabel(
+            camData.resolutions[currentResIdx].width, camData.resolutions[currentResIdx].height)
+        : availableRatios.isNotEmpty ? availableRatios.first : '4:3';
+
+    // --- FPS logic ---
+    const fpsOptions = [24, 30, 60];
+    final currentFps = appState.targetFps;
+
+    // --- Camera facing switch ---
+    final hasFrontCam = camData.sensors.any((s) => s.lensFacing == 1);
+    final currentSensor = camData.sensors.firstWhere(
+      (s) => s.cameraId == camData.sensorSelected.cameraId,
+      orElse: () => camData.sensors.first,
+    );
+    final isFront = currentSensor.lensFacing == 1;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Card(
+        elevation: 0,
+        color: cs.surfaceContainer,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Row(
+            children: [
+              // Camera switch button
+              if (camData.sensors.length > 1)
+                Tooltip(
+                  message: isFront ? 'Front camera' : 'Back camera',
+                  child: IconButton.filledTonal(
+                    onPressed: () async {
+                      if (hasFrontCam) {
+                        // Switch to next camera with different facing.
+                        final targetFacing = isFront ? 0 : 1;
+                        final next = camData.sensors.firstWhere(
+                          (s) => s.lensFacing == targetFacing,
+                          orElse: () => camData.sensors.first,
+                        );
+                        viewState.cameraId = next.cameraId;
+                        viewState.resolutionIndex = -1; // auto
+                        await _pushViewState();
+                      } else {
+                        // No front camera; just cycle to next sensor.
+                        await RemoteCamChannel.switchToNextCamera();
+                      }
+                    },
+                    icon: Icon(
+                      isFront ? Icons.camera_rear : Icons.camera_front,
+                    ),
+                  ),
+                ),
+              if (camData.sensors.length > 1) const SizedBox(width: 4),
+
+              // Aspect ratio chips
+              if (availableRatios.length > 1) ...[
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: availableRatios.map((ratio) {
+                        final selected = ratio == currentRatio;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: ChoiceChip(
+                            label: Text(ratio),
+                            selected: selected,
+                            onSelected: (_) async {
+                              final bucket = ratioBuckets[ratio];
+                              if (bucket == null || bucket.isEmpty) return;
+                              // Pick the largest resolution (first in reversed-sorted list).
+                              viewState.resolutionIndex = bucket.first;
+                              await _pushViewState();
+                            },
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+              ] else
+                const Spacer(),
+
+              // FPS chips
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: fpsOptions.map((fps) {
+                    final selected = fps == currentFps;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: ChoiceChip(
+                        label: Text('$fps'),
+                        selected: selected,
+                        onSelected: (_) async {
+                          await appState.updateTargetFps(fps);
+                        },
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Returns "4:3", "16:9", "1:1" or a raw "W:H" fallback.
+  String _aspectRatioLabel(int w, int h) {
+    if (h == 0) return '?';
+    final ratio = w / h;
+    if ((ratio - 4 / 3).abs() < 0.02) return '4:3';
+    if ((ratio - 16 / 9).abs() < 0.02) return '16:9';
+    if ((ratio - 1.0).abs() < 0.02) return '1:1';
+    // Fallback: reduced W:H
+    final gcd = _gcd(w, h);
+    return '${w ~/ gcd}:${h ~/ gcd}';
+  }
+
+  int _gcd(int a, int b) {
+    while (b != 0) {
+      final t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
   }
 
   Widget _buildPreview(ViewState viewState) {
