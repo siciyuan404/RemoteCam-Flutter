@@ -16,6 +16,9 @@ on:
 env:
   FLUTTER_VERSION: '3.44.4'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Android APK
