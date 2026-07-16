@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.remotecam.remotecam_flutter"
-        minSdk = 33
+        minSdk = 29  // Android 10, covers Huawei P40 Pro (max Android 11)
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
