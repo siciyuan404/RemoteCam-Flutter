@@ -1,0 +1,59 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+**/generated_plugin_registrant.dart
+
+# Android / Gradle
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/**/GeneratedPluginRegistrant.java
+android/key.properties
+*.iml
+**/android/.cxx/
+**/android/.idea/
+
+# iOS / macOS / Xcode
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Pods/
+**/.symlinks/
+**/Flutter/ephemeral/
+**/Flutter/flutter_export_environment.sh
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Secrets / signing
+*.keystore
+*.jks
+key.properties
+.env
+.env.local
+
+# Generated l10n (committed for simplicity; comment out if desired)
+# lib/l10n/app_localizations*.dart
+
+# Misc
+*.log
+coverage/

@@ -1,0 +1,26 @@
+name: remotecam_flutter
+description: "RemoteCam Enhanced - Flutter port. Camera MJPEG/H.264 streaming over HTTP."
+publish_to: 'none'
+version: 1.2.0+4
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+  dynamic_color: ^1.7.0
+  permission_handler: ^11.3.1
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true

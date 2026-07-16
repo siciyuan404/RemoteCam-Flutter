@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RemoteCam</string>
+    <string name="notif_title">RemoteCam (active)</string>
+    <string name="notif_text">Streaming camera over HTTP</string>
+    <string name="notif_kill">STOP</string>
+</resources>

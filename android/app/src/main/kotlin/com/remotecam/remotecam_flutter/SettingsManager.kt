@@ -1,0 +1,170 @@
+package com.remotecam.remotecam_flutter
+
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
+
+object SettingsManager {
+
+    private const val PREFS_NAME = "RemoteCamSettings"
+
+    private const val KEY_PREVIEW = "preview"
+    private const val KEY_STREAM = "stream"
+    private const val KEY_CAMERA_ID = "cameraId"
+    private const val KEY_RESOLUTION_INDEX = "resolutionIndex"
+    private const val KEY_QUALITY = "quality"
+    private const val KEY_FLASH = "flash_enabled"
+    private const val KEY_FLASH_LEVEL = "flash_level"
+    private const val KEY_ZOOM_RATIO = "zoom_ratio"
+
+    private const val KEY_THEME = "theme_mode"
+    private const val KEY_MONET = "monet_enabled"
+    private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
+    private const val KEY_LANGUAGE = "language_code"
+
+    private const val KEY_REMEMBER_SETTINGS_ENABLED = "remember_settings"
+    private const val KEY_REMEMBER_FLASH = "remember_flash"
+    private const val KEY_REMEMBER_ZOOM = "remember_zoom"
+    private const val KEY_REMEMBER_SENSOR = "remember_sensor"
+    private const val KEY_REMEMBER_RESOLUTION = "remember_resolution"
+    private const val KEY_REMEMBER_QUALITY = "remember_quality"
+    private const val KEY_REMEMBER_H264 = "remember_h264"
+
+    private const val KEY_TARGET_FPS = "target_fps"
+    private const val KEY_DOUBLE_TAP_ACTION = "double_tap_action"
+    private const val KEY_STABILIZATION_OFF = "stabilization_off"
+    private const val KEY_ANTI_FLICKER_MODE = "anti_flicker_mode"
+    private const val KEY_NOISE_REDUCTION_MODE = "noise_reduction_mode"
+
+    private const val KEY_VOLUME_ACTION = "volume_action"
+
+    private const val KEY_AUTO_DIM_DELAY = "auto_dim_delay"
+    private const val KEY_LOCK_INPUT_ON_DIM = "lock_input_on_dim"
+    private const val KEY_BACKGROUND_STREAMING = "background_streaming"
+    private const val KEY_ALLOW_RECONNECTS = "allow_reconnects"
+
+    private const val KEY_ZOOM_SMOOTHING_DELAY = "zoom_smoothing_delay"
+    private const val KEY_HTTP_PORT = "http_port"
+
+    private const val KEY_STREAM_FORMAT = "stream_format"
+    private const val KEY_H264_BITRATE = "h264_bitrate"
+    private const val KEY_H264_MODE = "h264_mode"
+
+    const val THEME_AUTO = 0
+    const val THEME_LIGHT = 1
+    const val THEME_DARK = 2
+
+    const val LANG_AUTO = "auto"
+    const val LANG_EN = "en"
+    const val LANG_FR = "fr"
+    const val LANG_HU = "hu"
+    const val LANG_PT = "pt"
+
+    const val DOUBLE_TAP_OFF = 0
+    const val DOUBLE_TAP_SWITCH_CAM = 1
+    const val DOUBLE_TAP_TOGGLE_ZOOM = 2
+
+    const val ANTI_FLICKER_AUTO = 0
+    const val ANTI_FLICKER_OFF = 1
+    const val ANTI_FLICKER_50HZ = 2
+    const val ANTI_FLICKER_60HZ = 3
+
+    const val NR_AUTO = 0
+    const val NR_OFF = 1
+    const val NR_LOW = 2
+    const val NR_HIGH = 3
+
+    const val VOL_ACTION_OFF = 0
+    const val VOL_ACTION_ZOOM = 1
+    const val VOL_ACTION_SWITCH_CAM = 2
+    const val VOL_ACTION_TOGGLE_FLASH = 3
+
+    const val DIM_DELAY_OFF = 0
+    const val DIM_DELAY_45S = 45000
+    const val DIM_DELAY_1M = 60000
+    const val DIM_DELAY_90S = 90000
+    const val DIM_DELAY_2M = 120000
+    const val DIM_DELAY_3M = 180000
+    const val DIM_DELAY_5M = 300000
+
+    const val SMOOTH_DELAY_NONE = 0
+    const val SMOOTH_DELAY_5 = 5
+    const val SMOOTH_DELAY_8 = 8
+    const val SMOOTH_DELAY_10 = 10
+    const val SMOOTH_DELAY_15 = 15
+    const val SMOOTH_DELAY_20 = 20
+    const val SMOOTH_DELAY_25 = 25
+    const val SMOOTH_DELAY_30 = 30
+    const val SMOOTH_DELAY_40 = 40
+    const val SMOOTH_DELAY_50 = 50
+
+    const val DEFAULT_PORT = 8080
+
+    const val FORMAT_MJPEG = 0
+    const val FORMAT_H264 = 1
+    const val DEFAULT_H264_BITRATE = 10
+    const val H264_MODE_CBR = 0
+    const val H264_MODE_VBR = 1
+
+    fun getPrefs(context: Context): SharedPreferences {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    }
+
+    fun saveThemeMode(context: Context, mode: Int) = getPrefs(context).edit { putInt(KEY_THEME, mode) }
+    fun loadThemeMode(context: Context) = getPrefs(context).getInt(KEY_THEME, THEME_AUTO)
+    fun saveMonetEnabled(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_MONET, enabled) }
+    fun loadMonetEnabled(context: Context) = getPrefs(context).getBoolean(KEY_MONET, true)
+    fun saveKeepScreenOn(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_KEEP_SCREEN_ON, enabled) }
+    fun loadKeepScreenOn(context: Context) = getPrefs(context).getBoolean(KEY_KEEP_SCREEN_ON, false)
+    fun saveLanguage(context: Context, languageCode: String) = getPrefs(context).edit { putString(KEY_LANGUAGE, languageCode) }
+    fun loadLanguage(context: Context) = getPrefs(context).getString(KEY_LANGUAGE, LANG_AUTO) ?: LANG_AUTO
+
+    fun saveRememberSettings(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_REMEMBER_SETTINGS_ENABLED, enabled) }
+    fun loadRememberSettings(context: Context) = getPrefs(context).getBoolean(KEY_REMEMBER_SETTINGS_ENABLED, true)
+    fun saveRememberFlash(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_REMEMBER_FLASH, enabled) }
+    fun loadRememberFlash(context: Context) = getPrefs(context).getBoolean(KEY_REMEMBER_FLASH, true)
+    fun saveRememberZoom(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_REMEMBER_ZOOM, enabled) }
+    fun loadRememberZoom(context: Context) = getPrefs(context).getBoolean(KEY_REMEMBER_ZOOM, true)
+    fun saveRememberSensor(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_REMEMBER_SENSOR, enabled) }
+    fun loadRememberSensor(context: Context) = getPrefs(context).getBoolean(KEY_REMEMBER_SENSOR, true)
+    fun saveRememberResolution(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_REMEMBER_RESOLUTION, enabled) }
+    fun loadRememberResolution(context: Context) = getPrefs(context).getBoolean(KEY_REMEMBER_RESOLUTION, true)
+    fun saveRememberQuality(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_REMEMBER_QUALITY, enabled) }
+    fun loadRememberQuality(context: Context) = getPrefs(context).getBoolean(KEY_REMEMBER_QUALITY, true)
+
+    fun saveRememberH264(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_REMEMBER_H264, enabled) }
+    fun loadRememberH264(context: Context) = getPrefs(context).getBoolean(KEY_REMEMBER_H264, true)
+
+    fun saveZoomRatio(context: Context, ratio: Float) { if(loadRememberSettings(context) && loadRememberZoom(context)) getPrefs(context).edit { putFloat(KEY_ZOOM_RATIO, ratio) } }
+    fun loadZoomRatio(context: Context): Float = if(loadRememberSettings(context) && loadRememberZoom(context)) getPrefs(context).getFloat(KEY_ZOOM_RATIO, 1.0f) else 1.0f
+    fun saveTargetFps(context: Context, fps: Int) = getPrefs(context).edit { putInt(KEY_TARGET_FPS, fps) }
+    fun loadTargetFps(context: Context) = getPrefs(context).getInt(KEY_TARGET_FPS, 30)
+    fun saveDoubleTapAction(context: Context, action: Int) = getPrefs(context).edit { putInt(KEY_DOUBLE_TAP_ACTION, action) }
+    fun loadDoubleTapAction(context: Context) = getPrefs(context).getInt(KEY_DOUBLE_TAP_ACTION, DOUBLE_TAP_OFF)
+    fun saveStabilizationOff(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_STABILIZATION_OFF, enabled) }
+    fun loadStabilizationOff(context: Context) = getPrefs(context).getBoolean(KEY_STABILIZATION_OFF, false)
+    fun saveAntiFlickerMode(context: Context, mode: Int) = getPrefs(context).edit { putInt(KEY_ANTI_FLICKER_MODE, mode) }
+    fun loadAntiFlickerMode(context: Context) = getPrefs(context).getInt(KEY_ANTI_FLICKER_MODE, ANTI_FLICKER_AUTO)
+    fun saveNoiseReductionMode(context: Context, mode: Int) = getPrefs(context).edit { putInt(KEY_NOISE_REDUCTION_MODE, mode) }
+    fun loadNoiseReductionMode(context: Context) = getPrefs(context).getInt(KEY_NOISE_REDUCTION_MODE, NR_AUTO)
+    fun saveVolumeAction(context: Context, action: Int) = getPrefs(context).edit { putInt(KEY_VOLUME_ACTION, action) }
+    fun loadVolumeAction(context: Context) = getPrefs(context).getInt(KEY_VOLUME_ACTION, VOL_ACTION_OFF)
+    fun saveAutoDimDelay(context: Context, delayMs: Int) = getPrefs(context).edit { putInt(KEY_AUTO_DIM_DELAY, delayMs) }
+    fun loadAutoDimDelay(context: Context) = getPrefs(context).getInt(KEY_AUTO_DIM_DELAY, DIM_DELAY_OFF)
+    fun saveLockInputOnDim(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_LOCK_INPUT_ON_DIM, enabled) }
+    fun loadLockInputOnDim(context: Context) = getPrefs(context).getBoolean(KEY_LOCK_INPUT_ON_DIM, false)
+    fun saveBackgroundStreaming(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_BACKGROUND_STREAMING, enabled) }
+    fun loadBackgroundStreaming(context:Context) = getPrefs(context).getBoolean(KEY_BACKGROUND_STREAMING, true)
+    fun saveAllowReconnects(context: Context, enabled: Boolean) = getPrefs(context).edit { putBoolean(KEY_ALLOW_RECONNECTS, enabled) }
+    fun loadAllowReconnects(context: Context) = getPrefs(context).getBoolean(KEY_ALLOW_RECONNECTS, true)
+    fun saveZoomSmoothingDelay(context: Context, delayMs: Int) = getPrefs(context).edit { putInt(KEY_ZOOM_SMOOTHING_DELAY, delayMs) }
+    fun loadZoomSmoothingDelay(context: Context) = getPrefs(context).getInt(KEY_ZOOM_SMOOTHING_DELAY, SMOOTH_DELAY_NONE)
+    fun savePort(context: Context, port: Int) = getPrefs(context).edit { putInt(KEY_HTTP_PORT, port) }
+    fun loadPort(context: Context) = getPrefs(context).getInt(KEY_HTTP_PORT, DEFAULT_PORT)
+    fun saveStreamFormat(context: Context, format: Int) = getPrefs(context).edit { putInt(KEY_STREAM_FORMAT, format) }
+    fun loadStreamFormat(context: Context) = getPrefs(context).getInt(KEY_STREAM_FORMAT, FORMAT_MJPEG)
+    fun saveH264Bitrate(context: Context, mbps: Int) = getPrefs(context).edit { putInt(KEY_H264_BITRATE, mbps) }
+    fun loadH264Bitrate(context: Context) = getPrefs(context).getInt(KEY_H264_BITRATE, DEFAULT_H264_BITRATE)
+    fun saveH264Mode(context: Context, mode: Int) = getPrefs(context).edit { putInt(KEY_H264_MODE, mode) }
+    fun loadH264Mode(context: Context) = getPrefs(context).getInt(KEY_H264_MODE, H264_MODE_CBR)
+}

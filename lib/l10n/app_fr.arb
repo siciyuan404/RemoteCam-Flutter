@@ -1,0 +1,169 @@
+{
+  "@@locale": "fr",
+
+  "app_name": "RemoteCam",
+
+  "notif_title": "RemoteCam (actif)",
+  "notif_text": "Appuyer pour ouvrir",
+  "notif_kill": "Arrêter",
+
+  "perm_welcome": "Bienvenue sur RemoteCam",
+  "perm_welcome_title": "Autorisation requise",
+  "perm_desc": "Pour fonctionner, l'application a besoin d'accéder à votre caméra et d'afficher des notifications.",
+  "perm_reasons_title": "Pourquoi ces autorisations ?",
+  "perm_cam_reason": "Pour capturer et diffuser la vidéo.",
+  "perm_notif_reason": "Pour maintenir le service actif en arrière-plan.",
+  "perm_button": "Accorder les autorisations",
+  "perm_toast_denied": "Toutes les autorisations sont requises pour utiliser l'application.",
+
+  "cam_settings": "Paramètres",
+  "cam_stop": "STOP",
+  "cam_clipboard_copied": "Copié dans le presse-papiers",
+
+  "cam_controls": "Contrôles",
+  "cam_local_preview": "Aperçu local",
+  "cam_mjpeg_stream": "Flux MJPEG",
+  "cam_flash": "Lampe torche",
+  "cam_flash_level": "Intensité",
+
+  "cam_parameters": "Paramètres",
+  "cam_sensor": "Capteur",
+  "cam_resolution": "Résolution",
+  "cam_quality": "Qualité JPEG",
+
+  "cam_information": "Informations",
+
+  "cam_overlay_locked": "Écran assombri et verrouillé. Appuyez pour déverrouiller.",
+
+  "settings_title": "Paramètres",
+  "settings_back": "Retour",
+  "settings_close": "Fermer",
+  "settings_save": "Enregistrer",
+
+  "settings_appearance": "Apparence",
+  "settings_theme": "Thème",
+  "settings_theme_auto": "Automatique (Système)",
+  "settings_theme_light": "Clair",
+  "settings_theme_dark": "Sombre",
+  "settings_monet": "Couleur dynamique (Monet)",
+
+  "settings_language": "Langue",
+  "settings_lang_auto": "Automatique (Système)",
+  "settings_lang_en": "English (Anglais)",
+  "settings_lang_fr": "Français",
+  "settings_lang_hu": "Magyar (Hongrois)",
+  "settings_lang_pt_br": "Português (Portugais)",
+
+  "settings_behavior_title": "Comportement",
+  "settings_keep_screen_on": "Garder l'écran allumé",
+
+  "settings_camera_title": "Caméra",
+
+  "settings_remember_title": "Mémoriser les paramètres",
+  "settings_remember_desc": "Applique les paramètres enregistrés au démarrage",
+  "settings_remember_dialog_title": "Mémoriser...",
+  "settings_remember_sensor": "Capteur de la caméra",
+  "settings_remember_resolution": "Résolution",
+  "settings_remember_quality": "Qualité JPEG",
+  "settings_remember_flash": "État de la lampe torche",
+  "settings_remember_zoom": "Niveau de zoom",
+  "settings_remember_h264": "Paramètres H.264",
+
+  "settings_fps_title": "IPS Cible",
+
+  "settings_stabilization_title": "Désactiver la stabilisation (OIS/EIS)",
+  "settings_stabilization_desc": "Améliore la latence sur trépied",
+
+  "settings_flicker_title": "Anti-scintillement",
+  "settings_flicker_auto": "Auto",
+  "settings_flicker_off": "Désactivé",
+  "settings_flicker_50hz": "50Hz (Europe, Asie)",
+  "settings_flicker_60hz": "60Hz (Amérique du Nord)",
+
+  "settings_noise_reduction_title": "Réduction du bruit",
+  "settings_noise_reduction_auto": "Auto",
+  "settings_noise_reduction_off": "Désactivé",
+  "settings_noise_reduction_low": "Faible (Rapide)",
+  "settings_noise_reduction_high": "Élevée (Haute Qualité)",
+
+  "settings_format_title": "Format du flux",
+  "settings_format_desc": "Format utilisé pour le flux HTTP",
+  "settings_format_mjpeg": "MJPEG",
+  "settings_format_mjpeg_desc": "Images",
+  "settings_format_h264": "H.264",
+  "settings_format_h264_desc": "Vidéo - Fluide",
+
+  "settings_controls_title": "Contrôles",
+
+  "settings_double_tap_title": "Action du double-appui",
+  "settings_double_tap_off": "Désactivé",
+  "settings_double_tap_switch_cam": "Changer de caméra",
+  "settings_double_tap_toggle_zoom": "Activer/désactiver le zoom x2",
+
+  "settings_volume_action_title": "Action des touches de volume",
+  "settings_volume_action_off": "Ne rien faire",
+  "settings_volume_action_zoom": "Contrôler le zoom",
+  "settings_volume_action_switch_cam": "Changer de caméra",
+  "settings_volume_action_toggle_flash": "Activer/désactiver la lampe torche",
+
+  "settings_remote_control_title": "Contrôle à distance",
+
+  "settings_zoom_smoothing_title": "Lissage du zoom",
+  "settings_zoom_smoothing_desc": "Adoucit les changements de zoom des touches de volume et double-appui",
+  "settings_zoom_smoothing_dialog_title": "Délai de lissage",
+  "settings_zoom_smoothing_none": "Aucun (Instantané)",
+
+  "settings_power_title": "Énergie et Écran",
+
+  "settings_power_ignore_optimizations": "Ignorer les optimisations batterie",
+  "settings_power_ignore_optimizations_desc": "Contourne les restrictions d'énergie (ouvre les paramètres)",
+
+  "settings_power_auto_dim": "Assombrir l'écran auto.",
+  "settings_power_auto_dim_dialog_title": "Assombrir l'écran après...",
+  "settings_power_auto_dim_off": "Désactivé",
+  "settings_power_auto_dim_45s": "45 secondes",
+  "settings_power_auto_dim_1m": "1 minute",
+  "settings_power_auto_dim_90s": "90 secondes",
+  "settings_power_auto_dim_2m": "2 minutes",
+  "settings_power_auto_dim_3m": "3 minutes",
+  "settings_power_auto_dim_5m": "5 minutes",
+
+  "settings_power_lock_input": "Verrouiller au lieu d'assombrir",
+  "settings_power_lock_input_desc": "Empêche les appuis accidentels",
+
+  "settings_power_background_streaming": "Streaming en arrière-plan",
+  "settings_power_background_streaming_desc": "Garde le service actif lorsque l'app est en fond",
+  "settings_power_allow_reconnects": "Autoriser les reconnexions",
+  "settings_power_allow_reconnects_desc": "Permet aux clients de se reconnecter au flux",
+
+  "settings_network_title": "Réseau",
+
+  "settings_port_title": "Port HTTP",
+  "settings_port_summary": "Port utilisé par le flux MJPEG.",
+  "settings_port_dialog_title": "Définir le Port HTTP",
+  "settings_port_dialog_label": "Port (1025-65535)",
+  "settings_port_dialog_invalid": "Port invalide. Doit être entre 1025 et 65535.",
+
+  "settings_app_title": "Application",
+  "settings_additional_title": "Paramètres supplémentaires",
+  "settings_about_app": "Application",
+
+  "settings_about_title": "À propos de RemoteCam",
+  "about_fork": "Cette application est un fork amélioré, maintenu par @alananassss.",
+  "about_star": "Star le repo sur GitHub",
+  "about_telegram": "N'hésitez pas à me contacter sur Telegram pour toute suggestion : @alananassss",
+  "about_version": "Version {version}",
+
+  "egg_title_alan": "Une petite note du dev :p",
+  "egg_message_alan": "Salut ! C'est Alan ^^\n\nC'est drôle que tu aies cliqué 7 fois ici !\n\nJe voulais juste te dire merci. Cette app est un 'fork', ce qui veut dire que j'ai repris la super base du développeur original et que j'y ai passé un temps fou (des jours et des jours, soirs et week-ends...) pour l'améliorer à ma façon.\n\nJ'espère vraiment qu'elle te sert !\n\nMerci de l'utiliser !\n- Alan",
+  "egg_button_alan": "Cool ! Salutations !",
+
+  "h264_bitrate": "Débit (Mbps)",
+  "h264_mode": "Mode de débit",
+  "h264_mode_cbr": "Constant (CBR - Faible Latence)",
+  "h264_mode_vbr": "Variable (VBR - Qualité)",
+
+  "error_port_title": "Port indisponible",
+  "error_port_message": "Le port {port} est déjà utilisé par une autre application. Veuillez en choisir un autre.",
+  "btn_change_port": "Changer de port"
+}

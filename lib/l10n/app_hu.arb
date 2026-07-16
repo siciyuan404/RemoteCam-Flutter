@@ -1,0 +1,169 @@
+{
+  "@@locale": "hu",
+
+  "app_name": "RemoteCam",
+
+  "notif_title": "RemoteCam (aktív)",
+  "notif_text": "Koppintson a megnyitáshoz",
+  "notif_kill": "Leállítás",
+
+  "perm_welcome": "Üdvözli a RemoteCam alkalmazás",
+  "perm_welcome_title": "Engedély szükséges",
+  "perm_desc": "A működéshez az alkalmazásnak hozzá kell férnie a kamerához, és értesítéseket kell megjelenítenie.",
+  "perm_reasons_title": "Miért kellenek ezek az engedélyek?",
+  "perm_cam_reason": "Videó rögzítéséhez és streameléséhez.",
+  "perm_notif_reason": "A szolgáltatás aktívan tartásához a háttérben.",
+  "perm_button": "Engedélyek megadása",
+  "perm_toast_denied": "Az alkalmazás használatához minden engedély szükséges.",
+
+  "cam_settings": "Beállítások",
+  "cam_stop": "STOP",
+  "cam_clipboard_copied": "Vágólapra másolva",
+
+  "cam_controls": "Vezérlők",
+  "cam_local_preview": "Helyi előnézet",
+  "cam_mjpeg_stream": "MJPEG Stream",
+  "cam_flash": "Vaku",
+  "cam_flash_level": "Fényerő",
+
+  "cam_parameters": "Paraméterek",
+  "cam_sensor": "Érzékelő",
+  "cam_resolution": "Felbontás",
+  "cam_quality": "JPEG minőség",
+
+  "cam_information": "Információ",
+
+  "cam_overlay_locked": "A képernyő elsötétítve és zárolva. Koppintson a feloldáshoz.",
+
+  "settings_title": "Beállítások",
+  "settings_back": "Vissza",
+  "settings_close": "Bezárás",
+  "settings_save": "Mentés",
+
+  "settings_appearance": "Megjelenés",
+  "settings_theme": "Téma",
+  "settings_theme_auto": "Automatikus (rendszer)",
+  "settings_theme_light": "Világos",
+  "settings_theme_dark": "Sötét",
+  "settings_monet": "Dinamikus szín (Monet)",
+
+  "settings_language": "Nyelv",
+  "settings_lang_auto": "Automatikus (rendszer)",
+  "settings_lang_en": "English (Angol)",
+  "settings_lang_fr": "Français (Francia)",
+  "settings_lang_hu": "Magyar",
+  "settings_lang_pt_br": "Português (Portugál)",
+
+  "settings_behavior_title": "Viselkedés",
+  "settings_keep_screen_on": "Képernyő bekapcsolva tartása",
+
+  "settings_camera_title": "Kamera",
+
+  "settings_remember_title": "Kamerabeállítások megjegyzése",
+  "settings_remember_desc": "Indításkor alkalmazza a mentett beállításokat",
+  "settings_remember_dialog_title": "Megjegyzés...",
+  "settings_remember_sensor": "Kameraérzékelő",
+  "settings_remember_resolution": "Felbontás",
+  "settings_remember_quality": "JPEG minőség",
+  "settings_remember_flash": "Vaku állapota",
+  "settings_remember_zoom": "Zoom szint",
+  "settings_remember_h264": "H.264 beállítások",
+
+  "settings_fps_title": "Cél FPS",
+
+  "settings_stabilization_title": "Stabilizálás letiltása (OIS/EIS)",
+  "settings_stabilization_desc": "Javítja a késleltetést állvány használatakor",
+
+  "settings_flicker_title": "Villódzásgátló",
+  "settings_flicker_auto": "Automatikus",
+  "settings_flicker_off": "Ki",
+  "settings_flicker_50hz": "50Hz (Európa, Ázsia)",
+  "settings_flicker_60hz": "60Hz (Észak-Amerika)",
+
+  "settings_noise_reduction_title": "Zajcsökkentés",
+  "settings_noise_reduction_auto": "Automatikus",
+  "settings_noise_reduction_off": "Ki",
+  "settings_noise_reduction_low": "Alacsony (gyors)",
+  "settings_noise_reduction_high": "Magas (jobb minőség)",
+
+  "settings_format_title": "Stream formátum",
+  "settings_format_desc": "A HTTP stream formátuma",
+  "settings_format_mjpeg": "MJPEG",
+  "settings_format_mjpeg_desc": "Képek",
+  "settings_format_h264": "H.264",
+  "settings_format_h264_desc": "Videó - Hatékony",
+
+  "settings_controls_title": "Vezérlők",
+
+  "settings_double_tap_title": "Dupla koppintás művelete",
+  "settings_double_tap_off": "Ki",
+  "settings_double_tap_switch_cam": "Kameraváltás",
+  "settings_double_tap_toggle_zoom": "2x zoom váltása",
+
+  "settings_volume_action_title": "Hangerőgomb művelet",
+  "settings_volume_action_off": "Nincs művelet",
+  "settings_volume_action_zoom": "Zoom vezérlés",
+  "settings_volume_action_switch_cam": "Kameraváltás",
+  "settings_volume_action_toggle_flash": "Vaku váltása",
+
+  "settings_remote_control_title": "Távirányító",
+
+  "settings_zoom_smoothing_title": "Zoom simítás",
+  "settings_zoom_smoothing_desc": "Simítja a hangerőgombok és a dupla koppintás által végzett zoomváltozásokat",
+  "settings_zoom_smoothing_dialog_title": "Simítási késleltetés",
+  "settings_zoom_smoothing_none": "Nincs (azonnali)",
+
+  "settings_power_title": "Energia és képernyő",
+
+  "settings_power_ignore_optimizations": "Akkumulátor-optimalizálás figyelmen kívül hagyása",
+  "settings_power_ignore_optimizations_desc": "Energiatakarékos funkciók megkerülése (rendszerbeállításokat nyit meg)",
+
+  "settings_power_auto_dim": "Képernyő automatikus sötétítése",
+  "settings_power_auto_dim_dialog_title": "Képernyő sötétítése ennyi idő után...",
+  "settings_power_auto_dim_off": "Ki",
+  "settings_power_auto_dim_45s": "45 másodperc",
+  "settings_power_auto_dim_1m": "1 perc",
+  "settings_power_auto_dim_90s": "90 másodperc",
+  "settings_power_auto_dim_2m": "2 perc",
+  "settings_power_auto_dim_3m": "3 perc",
+  "settings_power_auto_dim_5m": "5 perc",
+
+  "settings_power_lock_input": "Bemenet zárolása sötétítéskor",
+  "settings_power_lock_input_desc": "Megakadályozza a véletlen bevitelt",
+
+  "settings_power_background_streaming": "Háttérben történő streamelés",
+  "settings_power_background_streaming_desc": "A szolgáltatás aktívan tartása, ha az alkalmazás a háttérben van",
+  "settings_power_allow_reconnects": "Újracsatlakozás engedélyezése",
+  "settings_power_allow_reconnects_desc": "Lehetővé teszi a kliensek számára, hogy újracsatlakozzanak a streamhez",
+
+  "settings_network_title": "Hálózat",
+
+  "settings_port_title": "HTTP-port",
+  "settings_port_summary": "Az MJPEG stream által használt port.",
+  "settings_port_dialog_title": "HTTP-port beállítása",
+  "settings_port_dialog_label": "Port (1025–65535)",
+  "settings_port_dialog_invalid": "Érvénytelen port. 1025 és 65535 között kell lennie.",
+
+  "settings_app_title": "Alkalmazás",
+  "settings_additional_title": "További beállítások",
+  "settings_about_app": "Az alkalmazásról",
+
+  "settings_about_title": "A RemoteCam névjegye",
+  "about_fork": "Ez az alkalmazás egy továbbfejlesztett fork, karbantartója: @alananassss.",
+  "about_star": "Csillagozza a repót GitHubon",
+  "about_telegram": "Keressen bátran Telegramon javaslatokkal: @alananassss",
+  "about_version": "Verzió {version}",
+
+  "egg_title_alan": "Egy kis üzenet a fejlesztőtől :p",
+  "egg_message_alan": "Szia! Alan vagyok ^^\n\nVicces, hogy hétszer koppintottál ide!\n\nCsak köszönetet akartam mondani. Ez az app egy „fork\", ami azt jelenti, hogy az eredeti fejlesztő fantasztikus alapját vettem, és rengeteg időt (napokat, estéket és hétvégéket...) töltöttem a saját fejlesztéseim hozzáadásával.\n\nNagyon remélem, hogy hasznosnak találod!\n\nKöszi, hogy használod!\n- Alan",
+  "egg_button_alan": "Király! Üdv!",
+
+  "h264_bitrate": "Bitráta (Mbps)",
+  "h264_mode": "Bitráta mód",
+  "h264_mode_cbr": "Állandó (CBR - Alacsony késleltetés)",
+  "h264_mode_vbr": "Változó (VBR - Minőség)",
+
+  "error_port_title": "Port nem elérhető",
+  "error_port_message": "A(z) {port} port már használatban van egy másik alkalmazás által. Kérjük, válasszon másikat.",
+  "btn_change_port": "Port módosítása"
+}
