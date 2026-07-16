@@ -67,8 +67,6 @@ class CamEngine(
     // --- H.264 / Codec Variables ---
     private var mediaCodec: MediaCodec? = null
     private var codecInputSurface: Surface? = null
-    private val codecBufferInfo = MediaCodec.BufferInfo()
-    private var codecJob: Job? = null
     private var h264ConfigData: ByteArray? = null
 
     private var minZoom: Float = 1.0f
@@ -113,7 +111,6 @@ class CamEngine(
 
     private fun stopRunning() {
         zoomAnimatorJob?.cancel()
-        codecJob?.cancel()
 
         try {
             mediaCodec?.stop()
@@ -280,6 +277,7 @@ class CamEngine(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) format.setInteger(MediaFormat.KEY_MAX_B_FRAMES, 0)
 
                 mediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_VIDEO_AVC)
+                mediaCodec?.setCallback(h264CodecCallback)
                 mediaCodec?.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
                 codecInputSurface = mediaCodec?.createInputSurface()
                 mediaCodec?.start()
@@ -330,41 +328,59 @@ class CamEngine(
         }
 
         session?.setRepeatingRequest(captureRequestBuilder!!.build(), sessionCallback!!, cameraHandler)
-        if (streamFormat == SettingsManager.FORMAT_H264) startH264EncoderLoop()
+        if (streamFormat == SettingsManager.FORMAT_H264) {
+            h264LastTime = System.currentTimeMillis()
+            h264BytesAccumulated = 0
+        }
         updateView()
     }
 
-    private fun startH264EncoderLoop() {
-        var lastTimeH264 = System.currentTimeMillis()
-        var bytesAccumulated = 0
-        codecJob = CoroutineScope(Dispatchers.IO).launch {
-            while (isActive && mediaCodec != null) {
-                try {
-                    val index = mediaCodec?.dequeueOutputBuffer(codecBufferInfo, 10000) ?: -1
-                    if (index >= 0) {
-                        val buffer = mediaCodec?.getOutputBuffer(index)
-                        if (buffer != null) {
-                            val bytes = ByteArray(codecBufferInfo.size)
-                            buffer.get(bytes)
-                            if ((codecBufferInfo.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
-                                h264ConfigData = bytes
-                            } else {
-                                val isKey = (codecBufferInfo.flags and MediaCodec.BUFFER_FLAG_KEY_FRAME) != 0
-                                val data = if (isKey && h264ConfigData != null) h264ConfigData!! + bytes else bytes
-                                if (stream && !insidePause) http?.sendH264Frame(data, isKey)
-                                bytesAccumulated += bytes.size
-                                val now = System.currentTimeMillis()
-                                if (now - lastTimeH264 > quickUpdateIntervalMs) {
-                                    updateViewQuick(DataQuick(ms = 0, rateKbs = (bytesAccumulated * 1000L / ((now - lastTimeH264) * 1024L)).toInt()))
-                                    lastTimeH264 = now; bytesAccumulated = 0
-                                }
-                            }
-                        }
-                        mediaCodec?.releaseOutputBuffer(index, false)
+    // H.264 encoder statistics (used by async callback)
+    private var h264BytesAccumulated = 0
+    private var h264LastTime = 0L
+
+    /**
+     * Async MediaCodec callback — replaces the old polling loop.
+     * onOutputBufferAvailable is invoked immediately when an encoded frame is ready,
+     * eliminating the 10 ms dequeue polling latency.
+     */
+    private val h264CodecCallback = object : MediaCodec.Callback() {
+        override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
+            if (index < 0) return
+            try {
+                val buffer = codec.getOutputBuffer(index)
+                if (buffer == null) {
+                    codec.releaseOutputBuffer(index, false)
+                    return
+                }
+                val bytes = ByteArray(info.size)
+                buffer.get(bytes)
+
+                if ((info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
+                    h264ConfigData = bytes
+                } else {
+                    val isKey = (info.flags and MediaCodec.BUFFER_FLAG_KEY_FRAME) != 0
+                    val data = if (isKey && h264ConfigData != null) h264ConfigData!! + bytes else bytes
+                    if (stream && !insidePause) http?.sendH264Frame(data, isKey)
+
+                    h264BytesAccumulated += bytes.size
+                    val now = System.currentTimeMillis()
+                    if (now - h264LastTime > quickUpdateIntervalMs) {
+                        val rate = if (now > h264LastTime)
+                            (h264BytesAccumulated * 1000L / ((now - h264LastTime) * 1024L)).toInt() else 0
+                        updateViewQuick(DataQuick(ms = 0, rateKbs = rate))
+                        h264LastTime = now; h264BytesAccumulated = 0
                     }
-                } catch (e: Exception) { }
+                }
+                codec.releaseOutputBuffer(index, false)
+            } catch (e: Exception) {
+                try { codec.releaseOutputBuffer(index, false) } catch (_: Exception) {}
             }
         }
+
+        override fun onError(codec: MediaCodec, e: MediaCodec.CodecException) {}
+        override fun onInputBufferAvailable(codec: MediaCodec, index: Int) {}
+        override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) {}
     }
 
     @JvmName("applyStreamFormat")

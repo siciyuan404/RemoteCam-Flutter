@@ -18,6 +18,12 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 data class H264Frame(val data: ByteArray, val isKeyFrame: Boolean)
 
+/** Each MJPEG client gets its own channel so multiple viewers don't starve each other. */
+class MjpegClientSession {
+    // Capacity 2: keep latest frame, drop stale ones under backpressure.
+    val channel = Channel<ByteArray>(capacity = 2)
+}
+
 class ClientSession {
     val channel = Channel<H264Frame>(capacity = 60)
     var needsKeyframe = true
@@ -25,27 +31,35 @@ class ClientSession {
 
 class HttpService {
     private lateinit var engine: NettyApplicationEngine
-    private lateinit var imageChannel: Channel<ByteArray>
-
     private val h264Clients = CopyOnWriteArrayList<ClientSession>()
+    private val mjpegClients = CopyOnWriteArrayList<MjpegClientSession>()
     private var currentPort: Int = 0
 
     var onPortBindError: ((Int) -> Unit)? = null
 
+    // Pre-computed boundary header to avoid per-frame allocation.
+    private val frameHeader: ByteArray =
+        "--FRAME\r\nContent-Type: image/jpeg\r\n\r\n".toByteArray()
+
     private fun producer(): suspend OutputStream.() -> Unit = {
         val outputStream = this
+        val session = MjpegClientSession()
+        mjpegClients.add(session)
         try {
-            imageChannel.consumeEach { frameData ->
-                outputStream.write("--FRAME\r\nContent-Type: image/jpeg\r\n\r\n".toByteArray())
+            session.channel.consumeEach { frameData ->
+                outputStream.write(frameHeader, 0, frameHeader.size)
                 outputStream.write(frameData)
                 outputStream.flush()
             }
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        } finally {
+            mjpegClients.remove(session)
+            session.channel.close()
+        }
     }
 
     fun start(port: Int = currentPort) {
         if (port != 0) currentPort = port
-        imageChannel = Channel(Channel.CONFLATED)
 
         // 1. Define the server
         engine = embeddedServer(Netty, port = currentPort, configure = {
@@ -113,8 +127,19 @@ class HttpService {
         start()
     }
 
+    /**
+     * Broadcast a JPEG frame to all connected MJPEG clients.
+     * If a client's buffer is full, drop the oldest frame and push the latest
+     * (keeps live latency low rather than queuing stale frames).
+     */
     fun sendFrame(bytes: ByteArray) {
-        if (::imageChannel.isInitialized) imageChannel.trySend(bytes)
+        for (client in mjpegClients) {
+            val result = client.channel.trySend(bytes)
+            if (!result.isSuccess) {
+                while (client.channel.tryReceive().isSuccess) { }
+                client.channel.trySend(bytes)
+            }
+        }
     }
 
     fun sendH264Frame(bytes: ByteArray, isKeyFrame: Boolean) {
@@ -135,9 +160,9 @@ class HttpService {
     }
 
     fun disconnectClients() {
-        for (client in h264Clients) {
-            client.channel.close()
-        }
+        for (client in h264Clients) { client.channel.close() }
         h264Clients.clear()
+        for (client in mjpegClients) { client.channel.close() }
+        mjpegClients.clear()
     }
 }

@@ -209,7 +209,19 @@ class _CameraScreenState extends State<CameraScreen> {
                     borderRadius: BorderRadius.circular(24),
                     child: Container(
                       color: Colors.black,
-                      child: _buildPreview(viewState),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          _buildPreview(viewState),
+                          // Floating camera switch button (top-right corner)
+                          if (camData != null && camData.sensors.length > 1)
+                            Positioned(
+                              top: 12,
+                              right: 12,
+                              child: _buildFloatingCameraSwitch(camData, viewState),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -253,6 +265,79 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
+  /// Floating camera switch button overlay on preview (top-right corner).
+  /// Cycles through all available cameras, with a clear front/back icon.
+  Widget _buildFloatingCameraSwitch(CameraData camData, ViewState viewState) {
+    final currentSensor = camData.sensors.firstWhere(
+      (s) => s.cameraId == camData.sensorSelected.cameraId,
+      orElse: () => camData.sensors.first,
+    );
+    final isFront = currentSensor.lensFacing == 1;
+    return Material(
+      color: Colors.black.withValues(alpha: 0.4),
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: () async {
+          // Cycle to next camera (handles both multi-back and front+back setups)
+          await RemoteCamChannel.switchToNextCamera();
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Icon(
+            isFront ? Icons.camera_rear : Icons.camera_front,
+            color: Colors.white,
+            size: 24,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Apply "Fluent mode" preset: H.264 + 720p (largest ≤1280x720) + CBR + 30fps + 8Mbps.
+  /// Targets the best streaming experience over typical WiFi.
+  Future<void> _applyFluentPreset(
+      CameraData camData, ViewState viewState, AppState appState) async {
+    // 1. Find best resolution: prefer 1280x720, fallback to closest ≤720p.
+    int bestIdx = -1;
+    int bestScore = -1;
+    for (var i = 0; i < camData.resolutions.length; i++) {
+      final r = camData.resolutions[i];
+      // Prefer exactly 720p height, then closest lower height.
+      final score = r.height <= 720 ? r.height * r.width : -r.height;
+      if (score > bestScore) {
+        bestScore = score;
+        bestIdx = i;
+      }
+    }
+
+    // 2. Apply all settings in one batch via setViewState.
+    viewState.streamFormat = 1; // H.264
+    viewState.h264Bitrate = 8; // 8 Mbps
+    viewState.h264Mode = 0; // CBR
+    if (bestIdx >= 0) viewState.resolutionIndex = bestIdx;
+
+    await _pushViewState();
+
+    // 3. Set target FPS to 30 (requires engine restart handled natively).
+    if (appState.targetFps != 30) {
+      await appState.updateTargetFps(30);
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            bestIdx >= 0
+                ? 'Fluent mode: H.264 ${camData.resolutions[bestIdx]} CBR 8Mbps @30fps'
+                : 'Fluent mode: H.264 CBR 8Mbps @30fps',
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   /// Quick toolbar below preview: camera switch / aspect ratio / frame rate.
   Widget _buildQuickToolbar(
       AppLocalizations l, CameraData camData, ViewState viewState, AppState appState) {
@@ -284,13 +369,7 @@ class _CameraScreenState extends State<CameraScreen> {
     const fpsOptions = [24, 30, 60];
     final currentFps = appState.targetFps;
 
-    // --- Camera facing switch ---
-    final hasFrontCam = camData.sensors.any((s) => s.lensFacing == 1);
-    final currentSensor = camData.sensors.firstWhere(
-      (s) => s.cameraId == camData.sensorSelected.cameraId,
-      orElse: () => camData.sensors.first,
-    );
-    final isFront = currentSensor.lensFacing == 1;
+    // --- Camera facing switch (moved to floating button on preview) ---
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -302,33 +381,15 @@ class _CameraScreenState extends State<CameraScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           child: Row(
             children: [
-              // Camera switch button
-              if (camData.sensors.length > 1)
-                Tooltip(
-                  message: isFront ? 'Front camera' : 'Back camera',
-                  child: IconButton.filledTonal(
-                    onPressed: () async {
-                      if (hasFrontCam) {
-                        // Switch to next camera with different facing.
-                        final targetFacing = isFront ? 0 : 1;
-                        final next = camData.sensors.firstWhere(
-                          (s) => s.lensFacing == targetFacing,
-                          orElse: () => camData.sensors.first,
-                        );
-                        viewState.cameraId = next.cameraId;
-                        viewState.resolutionIndex = -1; // auto
-                        await _pushViewState();
-                      } else {
-                        // No front camera; just cycle to next sensor.
-                        await RemoteCamChannel.switchToNextCamera();
-                      }
-                    },
-                    icon: Icon(
-                      isFront ? Icons.camera_rear : Icons.camera_front,
-                    ),
-                  ),
+              // Fluent mode preset: H.264 + 720p + CBR + 30fps + bitrate 8Mbps
+              Tooltip(
+                message: 'Fluent mode (H.264 720p CBR 8Mbps)',
+                child: IconButton.filledTonal(
+                  onPressed: () async => _applyFluentPreset(camData, viewState, appState),
+                  icon: const Icon(Icons.bolt),
                 ),
-              if (camData.sensors.length > 1) const SizedBox(width: 4),
+              ),
+              const SizedBox(width: 4),
 
               // Aspect ratio chips
               if (availableRatios.length > 1) ...[
